@@ -1,0 +1,42 @@
+﻿'  /                                                        \
+' | Before running this, first export DNG files in DXO Mark |
+' \                                                        /
+
+uses "file", "console"
+
+$ROOT_PATH = Path_Fix("E:\2025\04\06\Vyber")
+
+string raws()
+
+$BACKUP_DIR = $ROOT_PATH + "original-raws\"
+
+DIR_ListArray(raws, $ROOT_PATH, "*.RW2.data-zps", %FILE_NORMAL)
+dir_make($BACKUP_DIR)
+
+STRING originalName
+STRING originalRawName
+STRING alternativeName
+for i as long = 1 to countof(raws)
+  originalName    = raws(i)
+  originalRawName = left$(originalName, len(originalName)-9)
+  
+  alternativeName = replace$(raws(i), ".RW2.", ".dng.")
+  file_copy($ROOT_PATH + originalName, $ROOT_PATH + alternativeName)
+  
+  File_MoveIfNeeded($ROOT_PATH + originalName, $BACKUP_DIR + originalName)
+  
+  File_MoveIfNeeded($ROOT_PATH + originalRawName, $BACKUP_DIR + originalRawName)
+  
+  printl alternativeName
+next
+
+printl "DONE" in 10
+waitkey
+
+function File_MoveIfNeeded(sourcePath as string, targetPath as string)
+  if file_load(sourcePath) = file_load(targetPath) Then
+    file_kill(sourcePath)
+  Else
+    File_Move(sourcePath, targetPath)
+  end if
+end function

@@ -1,2 +1,4 @@
 *.cube      text eol=lf
+*.tbasic    text eol=crlf
+*.tbasicu   text eol=crlf
 

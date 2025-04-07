@@ -1,0 +1,55 @@
+﻿uses "console", "file"
+
+$PUBLISHED_DIR  = path_fix("F:\Exporty\Gen-Vanocky-2023")
+$ORIGINALS_DIR  = path_fix("G:\memories\2024\03\06")
+$OUTPUT_DIR     = path_fix("E:\2025\Portfolio\Farewell")
+$OUTPUT_ALL_DIR = path_fix("E:\2025\Portfolio\Farewell\Complete")
+
+DIR_MakeAll($OUTPUT_DIR)
+DIR_MakeAll($OUTPUT_ALL_DIR)
+
+string published()
+DIR_ListArray(published, $PUBLISHED_DIR, "*", %FILE_NORMAL)
+
+string originals()
+DIR_ListArray(originals, $ORIGINALS_DIR, "*.rw2;*.dng", %FILE_NORMAL)
+
+string origName
+for i as long = 1 to 0'countof(published)
+  origName = GuessOriginalName(published(i))
+  
+  printl origName
+  file_copy($ORIGINALS_DIR + origName, $OUTPUT_DIR + origName)
+next
+printl countof(published)
+
+long matchFound
+for j as long = 1 to countof(originals)
+  printl originals(j) in 13
+  file_copy($ORIGINALS_DIR + originals(j), $OUTPUT_DIR + "Complete\" + originals(j))
+
+next
+
+printl countof(originals) in 13
+
+printl "DONE" in 10
+
+waitkey
+
+function GuessOriginalName(exportedJpeg as string) as string
+  
+  if startsWith(exportedJpeg, "P") Then
+    return FILE_PathSplit(exportedJpeg, %Path_RootPathFile) + ".rw2"
+    
+  end if
+  if startsWith(exportedJpeg, "R") Then
+    return FILE_PathSplit(exportedJpeg, %Path_RootPathFile) + ".dng"
+  end if
+  
+  ' Hardblock to avoid loss of information
+  printl "UNKNOWN TYPE: " + exportedJpeg in 12
+  waitkey
+  
+end function
+
+
